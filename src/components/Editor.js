@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import "./Editor.css";
 import Profile from "./Profile";
+import Article from "./Article";
 
 class Editor extends Component {
   constructor(props) {
     super(props);
-    //this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.onPaste = this.onPaste.bind(this);
     this.editorChange = this.editorChange.bind(this);
     this.detectURL = this.detectURL.bind(this);
@@ -13,8 +14,13 @@ class Editor extends Component {
     this.getCard = this.getCard.bind(this);
 
     this.state = {
-      embedlyUrl: undefined,
-      content: undefined
+      embedlyUrl: "",
+      content: ""
+    };
+
+    this.textInput = null;
+    this.setTextInputRef = element => {
+      this.textInput = element;
     };
   }
 
@@ -30,15 +36,30 @@ class Editor extends Component {
             placeholder="글쓰기..."
             onPaste={this.onPaste}
             onKeyUp={this.editorChange}
+            ref={this.setTextInputRef}
           />
         </div>
         <div className="actionBar">
-          <button className="upload" onClick={this.props.handleSubmit}>
+          <button
+            className="upload"
+            disabled={!this.hasValue(this.state.content)}
+            onClick={this.handleSubmit}
+          >
             <span>스탠드업!</span>
           </button>
         </div>
       </div>
     );
+  }
+
+  handleSubmit(event) {
+    let article = Object.assign({}, Article());
+    article.user = "Genji";
+    article.content = this.state.content;
+    article.urls[0].url = this.state.embedlyUrl;
+    this.props.submit(article);
+
+    this.textInput.innerHTML = "";
   }
 
   onPaste(event) {
@@ -66,11 +87,12 @@ class Editor extends Component {
   }
 
   detectURL(text) {
-    //const urls = text.match(/(https?:\/\/[^\sA-Za-z0-9]+)/g) || text.match(/(www.[^\s]+)/g);
-    const urls =
+    // var urls = text.match(/(https?:\/\/[^\sA-Za-z0-9]+)/g) || text.match(/(www.[^\s]+)/g);
+    let urls =
       text.match(/(http(s)?:\/\/)([A-Za-z0-9\w]+\.*)+[a-z0-9.]{2,10}/g) ||
       text.match(/(www.[A-Za-z0-9\w]+\.*)+[a-z0-9.]{2,10}/g);
-    if (urls.length > 0) {
+
+    if (urls && urls.length > 0) {
       return urls[0];
     } else {
       return undefined;

@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://skyloign.github.io/study.standup",
   "dependencies": {
+    "firebase": "^5.5.1",
     "gh-pages": "^2.0.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2"
