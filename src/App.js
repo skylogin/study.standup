@@ -1,6 +1,9 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
+import logo from "./images/logo.png";
 import "./App.css";
+
+//로고: https://ko.cooltext.com
+//파비콘: https://www.favicon-generator.org
 
 class App extends Component {
   render() {
