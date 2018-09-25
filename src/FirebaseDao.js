@@ -56,6 +56,14 @@ class FirebaseDao {
   getArticle(key) {
     return firebase.database().ref("/posts/" + key);
   }
+
+  list(pagesize) {
+    return firebase
+      .database()
+      .ref("/posts")
+      .orderByKey()
+      .limitToLast(pagesize);
+  }
 }
 
 export default FirebaseDao;
