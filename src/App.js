@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import Editor from "./Editor";
+import Editor from "./components/Editor";
 
 import logo from "./images/logo.png";
 import "./App.css";
