@@ -5,10 +5,12 @@ import Profile from "./Profile";
 class Editor extends Component {
   constructor(props) {
     super(props);
+    //this.handleSubmit = this.handleSubmit.bind(this);
     this.onPaste = this.onPaste.bind(this);
     this.editorChange = this.editorChange.bind(this);
-    //this.getCard = this.getCard.bind(this);
-    //this.hasValue = this.hasValue.bind(this);
+    this.detectURL = this.detectURL.bind(this);
+    this.hasValue = this.hasValue.bind(this);
+    this.getCard = this.getCard.bind(this);
 
     this.state = {
       embedlyUrl: undefined,
@@ -64,7 +66,31 @@ class Editor extends Component {
   }
 
   detectURL(text) {
-    return undefined;
+    //const urls = text.match(/(https?:\/\/[^\sA-Za-z0-9]+)/g) || text.match(/(www.[^\s]+)/g);
+    const urls =
+      text.match(/(http(s)?:\/\/)([A-Za-z0-9\w]+\.*)+[a-z0-9.]{2,10}/g) ||
+      text.match(/(www.[A-Za-z0-9\w]+\.*)+[a-z0-9.]{2,10}/g);
+    if (urls.length > 0) {
+      return urls[0];
+    } else {
+      return undefined;
+    }
+  }
+
+  hasValue(value) {
+    if (value && typeof value === "string") {
+      return !value ? false : value.trim() === "" ? false : true;
+    } else {
+      return false;
+    }
+  }
+
+  getCard(embedlyUrl) {
+    if (embedlyUrl) {
+      return <div>{embedlyUrl}</div>;
+    } else {
+      return <div />;
+    }
   }
 }
 
