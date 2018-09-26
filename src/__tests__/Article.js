@@ -19,7 +19,7 @@ export default function getArticle(
       thumbnail_url: thumbnailUrl,
       thumbnail_width: thumbnailWidth,
       thumbnail_height: thumbnailHeight,
-      privider_name: privider_name
+      provider_name: provider_name
     }
   };
 }
