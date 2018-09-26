@@ -8,3 +8,5 @@ const config = {
 };
 
 export default config;
+
+export var embedlyKey = process.env.REACT_APP_EMBEDLY_KEY;

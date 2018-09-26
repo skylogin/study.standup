@@ -1,7 +1,11 @@
 import React, { Component } from "react";
-import "./Editor.css";
+
 import Profile from "./Profile";
-import Article from "./Article";
+import Card from "./Card";
+
+import getEmbedly from "../EmbedlyDao";
+
+import "./Editor.css";
 
 class Editor extends Component {
   constructor(props) {
@@ -12,10 +16,12 @@ class Editor extends Component {
     this.detectURL = this.detectURL.bind(this);
     this.hasValue = this.hasValue.bind(this);
     this.getCard = this.getCard.bind(this);
+    this.getForcedState = this.getForcedState.bind(this);
 
     this.state = {
       embedlyUrl: "",
-      content: ""
+      content: "",
+      cardInfo: undefined
     };
 
     this.textInput = null;
@@ -36,9 +42,11 @@ class Editor extends Component {
             placeholder="글쓰기..."
             onPaste={this.onPaste}
             onKeyUp={this.editorChange}
+            // dangerouslySetInnerHTML={{__html: this.state.content}}
             ref={this.setTextInputRef}
           />
         </div>
+        <Card cardInfo={this.state.cardInfo} />
         <div className="actionBar">
           <button
             className="upload"
@@ -53,19 +61,24 @@ class Editor extends Component {
   }
 
   handleSubmit(event) {
-    let article = Object.assign({}, Article());
-    article.user = "Genji";
-    article.content = this.state.content;
-    article.urls[0].url = this.state.embedlyUrl;
-    this.props.submit(article);
+    event.preventDefault();
+    this.props.submit(this.getArticle());
+    this.setState({
+      embedlyUrl: "",
+      content: "",
+      cardInfo: undefined
+    });
 
     this.textInput.innerHTML = "";
   }
 
   onPaste(event) {
     event.clipboardData.items[0].getAsString(text => {
-      if (this.detectURL(text)) {
-        this.setState({ embedlyUrl: text, content: this.state.content });
+      let checkText = this.detectURL(text);
+      if (checkText) {
+        this.getForcedState(checkText).then(obj => {
+          this.setState(obj);
+        });
       }
     });
   }
@@ -77,12 +90,17 @@ class Editor extends Component {
       (event.keyCode === 32 || event.keyCode === 13) &&
       checkText
     ) {
-      this.setState({
-        embedlyUrl: checkText,
-        content: event.currentTarget.textContent
-      });
+      this.getForcedState(checkText, event.currentTarget.textContent).then(
+        obj => {
+          this.setState(obj);
+        }
+      );
     } else {
-      this.setState({ content: event.currentTarget.textContent });
+      this.getForcedState(undefined, event.currentTarget.textContent).then(
+        obj => {
+          this.setState(obj);
+        }
+      );
     }
   }
 
@@ -99,6 +117,16 @@ class Editor extends Component {
     }
   }
 
+  getArticle() {
+    let article = {};
+    article.user = "Genji";
+    article.content = this.state.content;
+    if (this.state.embedlyUrl) {
+      article.cardInfo = this.state.cardInfo;
+    }
+    return article;
+  }
+
   hasValue(value) {
     if (value && typeof value === "string") {
       return !value ? false : value.trim() === "" ? false : true;
@@ -113,6 +141,33 @@ class Editor extends Component {
     } else {
       return <div />;
     }
+  }
+
+  getForcedState(embedlyUrl, content) {
+    return new Promise(resolve => {
+      if (embedlyUrl) {
+        getEmbedly(embedlyUrl)
+          .then(response => {
+            let cardInfo = Object.assign({}, response.data);
+            resolve({
+              embedlyUrl: embedlyUrl,
+              content: content,
+              cardInfo: cardInfo
+            });
+          })
+          .catch(error => {
+            resolve({
+              embedlyUrl: undefined,
+              content: undefined,
+              cardInfo: undefined
+            });
+          });
+      } else {
+        resolve({
+          content: content
+        });
+      }
+    });
   }
 }
 

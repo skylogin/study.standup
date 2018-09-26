@@ -5,8 +5,7 @@ export default function getEmbedly(url) {
   // embed.ly ㅅㅓ비스가 유료화되어서 유튜브로 대체
   return request.get("https://www.youtube.com/oembed", {
     headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Content-Type": "json"
+      "Access-Control-Allow-Origin": "*"
     },
     crossdomain: true,
     params: {

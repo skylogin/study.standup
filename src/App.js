@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import FirebaseDao from "./FirebaseDao";
 
 import Editor from "./components/Editor";
+import CardList from "./components/CardList";
 
 import config from "./config";
 import logo from "./images/logo.png";
@@ -35,18 +36,6 @@ class App extends Component {
     return true;
   }
 
-  getArticles() {
-    let list = [];
-    for (let i = 0; i < this.state.articles.length; i++) {
-      list.push(
-        <li key={this.state.articles[i].key}>
-          {this.state.articles[i].content}
-        </li>
-      );
-    }
-    return list;
-  }
-
   render() {
     return (
       <div className="App">
@@ -54,7 +43,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
         </header>
         <Editor submit={this.submit} isAnonymous={this.isAnonymous} />
-        <ul>{this.getArticles()}</ul>
+        <CardList articles={this.state.articles} />
       </div>
     );
   }
